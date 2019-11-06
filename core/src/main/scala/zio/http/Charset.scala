@@ -16,20 +16,24 @@
 
 package zio.http
 
-import java.nio.charset.{ StandardCharsets, Charset => JCharset }
+import java.nio.charset.{ StandardCharsets, Charset => NIOCharset }
+import scala.util.Try
 
-final case class Charset private (value: JCharset) extends AnyVal {
-  override def toString: String = value.displayName
+final case class Charset private (value: String) extends AnyVal {
+  override def toString: String = value
 }
 
 object Charset {
 
-  def apply(charSet: JCharset): Charset = Charset(charSet)
+  def fromNIOCharset(charSet: NIOCharset): Charset = Charset(charSet.name)
 
-  val `ISO-8859-1` = Charset(StandardCharsets.ISO_8859_1)
-  val `UTF-8`      = Charset(StandardCharsets.UTF_8)
-  val `UTF-16`     = Charset(StandardCharsets.UTF_16)
-  val `UTF-16BE`   = Charset(StandardCharsets.UTF_16BE)
-  val `UTF-16LE`   = Charset(StandardCharsets.UTF_16LE)
-  val `US-ASCII`   = Charset(StandardCharsets.US_ASCII)
+  def fromString(str: String): Option[Charset] =
+    Try(NIOCharset.forName(str)).map(nioCharset => Charset(nioCharset.name)).toOption
+
+  val ISO_8859_1 = Charset(StandardCharsets.ISO_8859_1.name)
+  val UTF_8      = Charset(StandardCharsets.UTF_8.name)
+  val UTF_16     = Charset(StandardCharsets.UTF_16.name)
+  val UTF_16BE   = Charset(StandardCharsets.UTF_16BE.name)
+  val UTF_16LE   = Charset(StandardCharsets.UTF_16LE.name)
+  val US_ASCII   = Charset(StandardCharsets.US_ASCII.name)
 }
