@@ -16,7 +16,7 @@
 
 package zio.http
 
-import java.nio.charset.{ StandardCharsets, Charset => NIOCharset }
+import java.nio.charset.{ StandardCharsets, Charset => JCharset }
 import scala.util.Try
 
 final case class Charset private (value: String) extends AnyVal {
@@ -25,10 +25,10 @@ final case class Charset private (value: String) extends AnyVal {
 
 object Charset {
 
-  def fromNIOCharset(charSet: NIOCharset): Charset = Charset(charSet.name)
+  def fromCharset(charSet: JCharset): Charset = Charset(charSet.name)
 
   def fromString(str: String): Option[Charset] =
-    Try(NIOCharset.forName(str)).map(nioCharset => Charset(nioCharset.name)).toOption
+    Try(JCharset.forName(str)).map(nioCharset => Charset(nioCharset.name)).toOption
 
   val ISO_8859_1 = Charset(StandardCharsets.ISO_8859_1.name)
   val UTF_8      = Charset(StandardCharsets.UTF_8.name)
